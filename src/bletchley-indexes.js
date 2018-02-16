@@ -39,7 +39,7 @@ class BletchleyIndexContainer {
       }
       currentlyParsedIndex = new BletchleyIndex(row,date)
     } else {
-      let member = new BletchleyIndexMember(row)
+      let member = new BletchleyIndexMember(row,currentlyParsedIndex)
       currentlyParsedIndex.addMember(member)
     }
   }

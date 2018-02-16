@@ -9,7 +9,8 @@
   "dependencies": {
     "axios": "^0.17.1",
     "csv": "^2.0.0",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "uuid": "^3.2.1"
   },
   "scripts": {
     "dev": "node examples/server.js",
@@ -20,6 +21,7 @@
     "test:e2e": ""
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.13.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.1",

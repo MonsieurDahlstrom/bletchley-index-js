@@ -1,26 +1,61 @@
+//
 import 'babel-polyfill'
+//
 import {expect} from 'chai'
+import sinon from 'sinon';
+//
 import moment from 'moment'
+import fs from 'fs';
+import path from 'path'
+import axios from 'axios'
+import axiosAdapter from 'axios-mock-adapter';
 
+//test subject
 import BletchleyIndexes from '../../../src/index'
 
 describe('BletchleyIndexes', function() {
-  describe('#retriveIndexes(data)', function() {
-    it('should parse live server', function(done) {
-      BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
-      .then( (indexes) => {
-        expect(indexes).to.be.an('array')
-        done()
+
+  describe('#retriveIndexes()', function() {
+
+    beforeEach(function() {
+      this.mock = new axiosAdapter(axios);
+    })
+
+    afterEach(function() {
+      this.mock.restore();
+    })
+
+    describe('network request succeed', function() {
+      beforeEach(function() {
+        let datapath = path.resolve(__dirname, '../../data/jan.csv')
+        let csvfile = fs.readFileSync(datapath, "utf8");
+        this.mock.onGet('https://www.bletchleyindexes.com/weights/jan.csv').reply(200,csvfile)
       })
-      .catch( (err) => done(err) )
-    });
-    it('should fail future date', function(done) {
-      let date = moment().add(1, 'month')
-      BletchleyIndexes.retriveIndexes(date)
-      .then( (indexes) => {
-        done('Expected this to fail')
+      it('parse results', function(done) {
+        BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
+        .then( (indexes) => {
+          expect(indexes).to.be.an('array')
+          done()
+        })
+        .catch( (err) => done(err) )
+      });
+    })
+
+    describe('network request failed', function() {
+      beforeEach(function() {
+        this.mock.onGet('https://www.bletchleyindexes.com/weights/jan.csv').networkError();
       })
-      .catch( (err) => done() )
-    });
+      it('parse results', function(done) {
+        let date = moment().add(1, 'month')
+        BletchleyIndexes.retriveIndexes(date)
+        .then( (indexes) => {
+          done('Expected this to fail')
+        })
+        .catch( (err) => {
+          done()
+        } )
+      });
+    })
+
   });
 })

@@ -24,6 +24,9 @@ describe('BletchleyIndex', function() {
         date = new Date()
         index = new BletchleyIndex(row, date)
       })
+      it("has a id", function() {
+        expect(index.id).to.be.an('string')
+      })
       it("has a name", function() {
         expect(index.name).to.be.an('string')
         expect(index.name).to.equal(row[0])
@@ -58,6 +61,7 @@ describe('BletchleyIndex', function() {
       let row = ["BTC", "0.45%", "4.56%"]
       let member = new BletchleyIndexMember(row)
       expect( () => { index.addMember(member) }).to.not.throw()
+      expect( member.bletchley_index_id).to.equal(index.id)
     })
   })
 })

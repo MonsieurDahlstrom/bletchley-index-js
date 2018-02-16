@@ -1,7 +1,11 @@
+import uuidv4 from 'uuid/v4';
+
+
 export default class BletchleyIndex {
 
   constructor(row = null, date = null) {
     if(!row || !date) throw Error('BletchleyIndex constructor needs a data and row object')
+    this.id = uuidv4()
     this.name = row[0]
     this.year = date.getFullYear()
     this.month = date.getMonth()
@@ -23,6 +27,7 @@ export default class BletchleyIndex {
       else if (result > 0) retun -1
       else return 0
     })
+    memberToAdd.bletchley_index_id = this.id
   }
 
   coins() {
