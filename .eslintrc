@@ -1,9 +1,4 @@
 {
   "root": true,
-  "plugins": [
-    "flowtype"
-  ],
-  "extends": [
-    "plugin:flowtype/recommended"
-  ]
+  "parser": "babel-eslint"
 }
