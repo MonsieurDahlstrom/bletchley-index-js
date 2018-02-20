@@ -18,7 +18,8 @@ class BletchleyIndexContainer {
     let url = "https://www.bletchleyindexes.com/weights/" + month + ".csv"
     let result = await axios.get(url)
     if(result.status === 200) await this.parseIndexData(result.data,date)
-    return Array.from(this.members)
+    let list = Array.from(this.members.values())
+    return list
   }
 
   async parseIndexData(data,date) {
@@ -33,7 +34,7 @@ class BletchleyIndexContainer {
   }
 
   parseRow(row, date) {
-    if ( row[0] === '') {
+    if ( row[0].length === 0) {
       if(currentlyParsedIndex) {
         this.members.set(currentlyParsedIndex.name,currentlyParsedIndex)
       }

@@ -35,10 +35,22 @@ describe('BletchleyIndexes', function() {
         BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
         .then( (indexes) => {
           expect(indexes).to.be.an('array')
+          expect(indexes.length).to.equal(5)
           done()
         })
         .catch( (err) => done(err) )
       });
+      it("has a result", function (done) {
+        BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
+        .then( (indexes) => {
+          let bletchleyIndex = indexes[0]
+          expect(bletchleyIndex.name).to.equal("10 Even Index")
+          expect(bletchleyIndex.members).to.be.an('array')
+          expect(bletchleyIndex.members.length).to.equal(10)
+          done()
+        })
+        .catch( (err) => done(err) )
+      })
     })
 
     describe('network request failed', function() {

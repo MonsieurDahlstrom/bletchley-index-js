@@ -6,7 +6,7 @@ export default class BletchleyIndex {
   constructor(row = null, date = null) {
     if(!row || !date) throw Error('BletchleyIndex constructor needs a data and row object')
     this.id = uuidv4()
-    this.name = row[0]
+    this.name = row[2]
     this.year = date.getFullYear()
     this.month = date.getMonth()
     this.members = []

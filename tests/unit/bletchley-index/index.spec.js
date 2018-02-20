@@ -11,7 +11,7 @@ describe('BletchleyIndex', function() {
       expect( () => { new BletchleyIndex() }).to.throw()
     });
     it('with row and date', function() {
-      let row = ["Bletchley Index 10"]
+      let row = ["", "Bletchley 10", "Bletchley Index 10"]
       let date = new Date()
       expect( () => { new BletchleyIndex(row,date) }).to.not.throw()
     });
@@ -20,7 +20,7 @@ describe('BletchleyIndex', function() {
       let row
       let date
       beforeEach(function() {
-        row = ["Bletchley Index 10"]
+        row = ["", "Bletchley 10", "Bletchley Index 10"]
         date = new Date()
         index = new BletchleyIndex(row, date)
       })
@@ -29,7 +29,7 @@ describe('BletchleyIndex', function() {
       })
       it("has a name", function() {
         expect(index.name).to.be.an('string')
-        expect(index.name).to.equal(row[0])
+        expect(index.name).to.equal(row[2])
       })
       it("has members", function() {
         expect(index.members).to.be.an('array')
@@ -50,7 +50,7 @@ describe('BletchleyIndex', function() {
     let index
     let row
     beforeEach( () => {
-      row = ["Bletchley Index 10"]
+      row = ["", "Bletchley 10", "Bletchley Index 10"]
       let date = new Date()
       index = new BletchleyIndex(row, date)
     })
@@ -58,8 +58,8 @@ describe('BletchleyIndex', function() {
       expect( () => { index.addMember() }).to.throw()
     })
     it('with a member', function () {
-      let row = ["BTC", "0.45%", "4.56%"]
-      let member = new BletchleyIndexMember(row)
+      let memberRow = ["BTC", "0.45%", "4.56%"]
+      let member = new BletchleyIndexMember(memberRow)
       expect( () => { index.addMember(member) }).to.not.throw()
       expect( member.bletchley_index_id).to.equal(index.id)
     })
