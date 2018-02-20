@@ -1,14 +1,14 @@
 {
   "name": "bletchley-indexes",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Small wrapper around Bletchley Cryptocurrencies Indexes",
   "main": "dist/index.js",
   "author": "Monsieur Dahlstrom ltd",
   "license": "BSD",
   "private": false,
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/MonsieurDahlstrom/bletchley-index-js.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MonsieurDahlstrom/bletchley-index-js.git"
   },
   "dependencies": {
     "axios": "^0.17.1",
