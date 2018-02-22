@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "csv": "^2.0.0",
+    "moment-range": "^3.1.1",
     "numeral": "^2.0.6",
     "uuid": "^3.2.1"
   },
@@ -31,6 +32,8 @@
     "babel-eslint": "^8.2.1",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-datetime": "^1.5.0",
     "eslint": "^4.17.0",
     "karma": "^2.0.0",
     "karma-babel-preprocessor": "^7.0.0",
