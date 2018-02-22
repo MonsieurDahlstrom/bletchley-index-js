@@ -73,7 +73,7 @@ describe('BletchleyIndexes', function() {
       expect(BletchleyIndexes.retriveMonthForDate(date)).to.equal(null)
     })
   })
-  describe('#retriveIndexes()', function() {
+  describe.only('#retriveIndexes()', function() {
 
     beforeEach(function() {
       this.mock = new axiosAdapter(axios);

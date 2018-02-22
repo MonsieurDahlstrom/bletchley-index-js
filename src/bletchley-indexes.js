@@ -18,6 +18,7 @@ class BletchleyIndexContainer {
 
   async retriveIndexes(date) {
     let month = this.retriveMonthForDate(date)
+    if(!month) throw Error("Date could not be matched to bletchley indexes")
     let url = "https://www.bletchleyindexes.com/weights/" + month + ".csv"
     let result = await axios.get(url)
     if(result.status === 200) await this.parseIndexData(result.data,date)
