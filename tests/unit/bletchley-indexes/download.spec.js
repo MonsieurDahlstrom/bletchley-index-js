@@ -19,7 +19,19 @@ import BletchleyIndexes from '../../../src/index'
 
 describe('BletchleyIndexes', function() {
 
-  describe.only("#thirdWednesdayOfMonth", function () {
+  let clock
+  let mock
+  beforeEach(function() {
+    mock = new axiosAdapter(axios);
+  })
+  afterEach(function() {
+    if(clock)
+      clock.restore();
+    if(mock)
+      mock.restore();
+  })
+
+  describe("#thirdWednesdayOfMonth", function () {
     let day
     beforeEach(function() {
       day = Math.floor(Math.random() * (28 - 1 + 1)) + 1;
@@ -51,12 +63,7 @@ describe('BletchleyIndexes', function() {
     })
   })
 
-  describe.only("#retriveMonthForDate", function () {
-    let clock
-    afterEach(function() {
-      if(clock)
-        clock.restore();
-    })
+  describe("#retriveMonthForDate", function () {
     it("wont return month for dates older then 13 months", function () {
       let yearAgo = moment().subtract(13,"month").toDate()
       expect(BletchleyIndexes.retriveMonthForDate(yearAgo)).to.equal(null)
@@ -73,67 +80,73 @@ describe('BletchleyIndexes', function() {
       expect(BletchleyIndexes.retriveMonthForDate(date)).to.equal(null)
     })
   })
+
   describe.only('#retriveIndexes()', function() {
 
-    beforeEach(function() {
-      this.mock = new axiosAdapter(axios);
-    })
-
-    afterEach(function() {
-      this.mock.restore();
-    })
-
     describe("different dates", function() {
-        let clock
+
         let now
         let futureDate
         let monthsAgo13
         let monthsAgo12Start
         let monthsAgo12End
+        let thisMonthBeforeDate
+        let thisMonthAfterDate
+        let sixMonthsAgo
         beforeEach(function () {
           now = new Date()
           futureDate = moment().add(1,'month').toDate()
           monthsAgo13 = moment().subtract(1,'year').subtract(1,"month").toDate()
           monthsAgo12Start = moment().subtract(1,'year').startOf('month').toDate()
           monthsAgo12End = moment().subtract(1,'year').endOf('month').toDate()
+          thisMonthBeforeDate = BletchleyIndexes.thirdWednesdayOfMonth(now).subtract(2,"days").toDate()
+          thisMonthAfterDate = BletchleyIndexes.thirdWednesdayOfMonth(now).add(2,"days").toDate()
+          sixMonthsAgo = moment().subtract(6, "months").toDate()
           clock = sinon.useFakeTimers();
           let datapath = path.resolve(__dirname, '../../data/jan.csv')
           let csvfile = fs.readFileSync(datapath, "utf8");
-          this.mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).reply(200,csvfile)
+          mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).reply(200,csvfile)
+        })
 
-        })
-        afterEach(function () {
-          clock.restore()
-        })
         it("should fail for future date", async () => {
           clock.tick( now.getTime() )
-          return expect(BletchleyIndexes.retriveIndexes(futureDate)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveMonthAbbrivation future date provided");
+          return expect(BletchleyIndexes.retriveIndexes(futureDate)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveIndexesDate could not be matched to bletchley indexes");
         })
         it('13 months ago fails', async () => {
           clock.tick( now.getTime() )
-          return expect(BletchleyIndexes.retriveIndexes(monthsAgo13)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveMonthAbbrivation date provided is to old");
+          return expect(BletchleyIndexes.retriveIndexes(monthsAgo13)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveIndexesDate could not be matched to bletchley indexes");
         }),
         it('12 months ago before bletchley index date', async () => {
           clock.tick( moment(now).startOf("month").toDate().getTime() )
           return expect(BletchleyIndexes.retriveIndexes(monthsAgo12Start)).to.eventually.be.fulfilled;
         })
         it('12 months ago after bletchley index date', async () =>{
-          clock.tick( moment(now).endOf("month").toDate().getTime() )
-          return expect(BletchleyIndexes.retriveIndexes(monthsAgo12End)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveMonthAbbrivation date provided is to old");
+          let dateForEnd = moment(now).endOf("month").subtract(1,"day").toDate()
+          clock.tick( dateForEnd.getTime() )
+          return expect(BletchleyIndexes.retriveIndexes(monthsAgo12End)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveIndexesDate could not be matched to bletchley indexes");
         })
-        it('this month before third Wednesday')
-        it('this month after third Wednesday')
-        it('a month in the last year')
+        it('this month before third Wednesday', function() {
+          clock.tick(thisMonthBeforeDate.getTime())
+          return expect(BletchleyIndexes.retriveIndexes(thisMonthAfterDate)).to.eventually.be.rejectedWith("BletchleyIndexes.retriveIndexesDate could not be matched to bletchley indexes");
+        })
+        it('this month after third Wednesday', function() {
+          clock.tick(thisMonthAfterDate.getTime())
+          return expect(BletchleyIndexes.retriveIndexes(thisMonthBeforeDate)).to.eventually.be.fulfilled;
+        })
+        it('a month in the last year', function () {
+          clock.tick(now.getTime())
+          return expect(BletchleyIndexes.retriveIndexes(sixMonthsAgo)).to.eventually.be.fulfilled;
+        })
     })
 
     describe('network request succeed', function() {
       beforeEach(function() {
         let datapath = path.resolve(__dirname, '../../data/jan.csv')
         let csvfile = fs.readFileSync(datapath, "utf8");
-        this.mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).reply(200,csvfile)
+        mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).reply(200,csvfile)
       })
       it('parse results', function(done) {
-        BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
+        BletchleyIndexes.retriveIndexes(new Date(2018, 1 ,1))
         .then( (indexes) => {
           expect(indexes).to.be.an('array')
           expect(indexes.length).to.equal(5)
@@ -142,7 +155,7 @@ describe('BletchleyIndexes', function() {
         .catch( (err) => done(err) )
       });
       it("has a result", function (done) {
-        BletchleyIndexes.retriveIndexes(new Date(2018, 0 ,1))
+        BletchleyIndexes.retriveIndexes(new Date(2018, 1 ,1))
         .then( (indexes) => {
           let bletchleyIndex = indexes[0]
           expect(bletchleyIndex.name).to.equal("10 Even Index")
@@ -156,7 +169,7 @@ describe('BletchleyIndexes', function() {
 
     describe('network request failed', function() {
       beforeEach(function() {
-        this.mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).networkError()
+        mock.onGet(/https:\/\/www.bletchleyindexes.com\/weights\/[a-zA-Z]{3}.csv/).networkError()
       })
       it('parse results', function(done) {
         let date = moment().add(1, 'month')

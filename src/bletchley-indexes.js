@@ -18,7 +18,7 @@ class BletchleyIndexContainer {
 
   async retriveIndexes(date) {
     let month = this.retriveMonthForDate(date)
-    if(!month) throw Error("Date could not be matched to bletchley indexes")
+    if(!month) throw Error("BletchleyIndexes.retriveIndexesDate could not be matched to bletchley indexes")
     let url = "https://www.bletchleyindexes.com/weights/" + month + ".csv"
     let result = await axios.get(url)
     if(result.status === 200) await this.parseIndexData(result.data,date)
@@ -32,11 +32,19 @@ class BletchleyIndexContainer {
     //
     let startOfMonth = moment().startOf("month")
     let endOfMonth = moment().endOf("month")
-    let thisMonthRange = moment.range(startOfMonth,this.thirdWednesdayOfMonth(date))
+    let wednesdayDate = this.thirdWednesdayOfMonth(new Date())
+    let thisMonthRange = moment.range(startOfMonth,wednesdayDate)
     let previousMonthsThisYear = moment.range(moment().startOf("year"), startOfMonth)
-    let lastYearMonths = moment.range(moment().subtract(12,"month").startOf("month"), moment().startOf("year"))
+    let lastYearMonths = moment.range(moment(wednesdayDate).subtract(1,"year").startOf("month"), moment().startOf("year"))
     if(lastYearMonths.contains(date)) {
-      result = date.toLocaleString(locale, { month: "short" }).toLowerCase()
+      if( moment(date).month() > moment().month() ) {
+        result = date.toLocaleString(locale, { month: "short" }).toLowerCase()
+      }
+      else if(moment().isoWeek() < wednesdayDate.isoWeek()) {
+        result = date.toLocaleString(locale, { month: "short" }).toLowerCase()
+      }else if( moment().isoWeek() === wednesdayDate.isoWeek() && moment().day() < wednesdayDate.day()) {
+        result = date.toLocaleString(locale, { month: "short" }).toLowerCase()
+      }
     } else if(previousMonthsThisYear.contains(date)) {
       result = date.toLocaleString(locale, { month: "short" }).toLowerCase()
     } else if( thisMonthRange.contains(date) ) {
