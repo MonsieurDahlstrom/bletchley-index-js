@@ -1,6 +1,6 @@
 {
   "name": "bletchley-indexes",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Small wrapper around Bletchley Cryptocurrencies Indexes",
   "main": "dist/index.js",
   "author": "Monsieur Dahlstrom ltd",
