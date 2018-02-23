@@ -81,7 +81,7 @@ describe('BletchleyIndexes', function() {
     })
   })
 
-  describe.only('#retriveIndexes()', function() {
+  describe('#retriveIndexes()', function() {
 
     describe("different dates", function() {
 
