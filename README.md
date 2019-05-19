@@ -1,7 +1,7 @@
 # bletchley-index-js
-A small JS library that fetches the CSV updates from [Bletchley Indexes](bletchleyindexes.com) for a given date.
+A small JS library that fetches the CSV updates from [Bletchley Indexes](http://bletchleyindexes.com) for a given date.
 
-```
+```js
 import BletchleyCSV from 'bletchley-indexes'
 
 //...
