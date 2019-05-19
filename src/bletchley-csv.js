@@ -8,7 +8,7 @@ import moment from 'moment'
 /**
 Class is used to retrive the cryptocurrencies indexes from bletchleyindexes.com
 An Instance is created by passing a date for the month they wich to retrive.
-if no date is passed the current motnh is used. 
+if no date is passed the current motnh is used.
 **/
 class BletchleyCSV {
 
@@ -61,7 +61,7 @@ class BletchleyCSV {
     //find the starting row for each coin index in the csv data
     let coinIndexes = csvData.filter( row => bletchleyNames.includes(row[0]) && row[1] == "New Weight" && row[2] == "Old Weight" && row[3] == "Turnover" )
       .map( row =>  { return {name:row[0], rowIndex: csvData.indexOf(row)}})
-    //step through each coin index and find each coin inside the index
+    //step through each index and find each currency within an index
     coinIndexes.forEach( (coinIndex, position) => {
       let nextCoinIndex = coinIndexes[position+1] ? coinIndexes[position+1].rowIndex : -1;
       let currencies = csvData.slice(coinIndex.rowIndex+1,  nextCoinIndex).map( (row) => { return {symbol:row[0], weight:row[1], previousWeight: row[2], turnover: row[3]} })
