@@ -69,7 +69,7 @@ class BletchleyCSV {
       bletchley.currencies = currencies
       bletchleyindexes.set(bletchley.name, bletchley)
     })
-    return Array.from( bletchleyindexes.entries() )
+    return Array.from( bletchleyindexes.values() )
   }
 }
 

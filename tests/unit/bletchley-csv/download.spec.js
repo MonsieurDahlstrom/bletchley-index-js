@@ -99,6 +99,9 @@ describe('BletchleyCSV', function() {
     it("returns set of coin indexes", async () => {
       let result = await subject.findCoinIndexes(csvData)
       expect(result).to.be.an('array')
+      expect(result[0]).to.have.keys(['name','turnover','currencies','date'])
+      expect(result[0].currencies[0]).to.have.keys(['symbol', 'weight', 'previousWeight', 'turnover'])
+
     })
   })
 })
